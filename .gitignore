@@ -18,4 +18,4 @@
 db
 
 # config
-config
+config/closed_config.go
