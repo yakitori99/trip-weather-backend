@@ -3,9 +3,12 @@ version: "3.7"
 services:     
     web:
         # buildはせず、存在するdocker imageを利用するよう指定
-        image: yakitori99/trip-weather-backend:v0.1.1
+        image: yakitori99/trip-weather-backend:v0.2.0
         ports:
             # web server
             - 1323:1323
         # ホストOSの起動時、コンテナの不慮の停止時などにコンテナを自動起動するよう指定
         restart: always
+        environment:
+            # Herokuと同様の設定でローカルで動かせるよう、環境変数PORTを設定
+            PORT: "1323"
