@@ -1,2 +1,8 @@
 # ローカルのexeはイメージに含めない(windowsのみに向けた実行ファイルのため）
 *.exe
+
+# .vscode
+.vscode
+
+# log
+*.log
