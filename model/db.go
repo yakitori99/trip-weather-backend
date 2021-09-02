@@ -1,12 +1,11 @@
 package model
 
 import (
-	"fmt"
-
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
 	"trip-weather-backend/config"
+	"trip-weather-backend/utils"
 )
 
 // パッケージ内で利用するdb(gorm.DBのインスタンスのポインタ)を宣言
@@ -19,6 +18,7 @@ func InitDB() {
 	db = _db
 
 	if err != nil {
+		utils.OutErrorLog("failed to connect database", err)
 		panic("failed to connect database")
 	}
 
@@ -26,5 +26,5 @@ func InitDB() {
 	db.AutoMigrate(&Pref{})
 	db.AutoMigrate(&City{})
 
-	fmt.Println("InitDB END")
+	utils.OutInfoLog("END")
 }

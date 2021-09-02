@@ -72,18 +72,24 @@ func GetWeatherFromByCityCode() echo.HandlerFunc {
 		wg.Add(2)
 		var weatherInfoYesterday WeatherInfo
 		var weatherInfosToday WeatherInfos
+		var err1 error
+		var err2 error
 		// 昨日の天気を取得
 		go func() {
 			defer wg.Done()
-			weatherInfoYesterday = GetWeatherYesterday(city.CityLon, city.CityLat)
+			weatherInfoYesterday, err1 = GetWeatherYesterday(city.CityLon, city.CityLat)
 		}()
 		// 1日分(今日)の天気予報を取得
 		go func() {
 			defer wg.Done()
-			weatherInfosToday = GetWeatherForcast(city.CityLon, city.CityLat, 1)
+			weatherInfosToday, err2 = GetWeatherForcast(city.CityLon, city.CityLat, 1)
 		}()
 		// 並行処理待ち合わせ
 		wg.Wait()
+
+		if err1 != nil || err2 != nil {
+			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+		}
 
 		// 昨日と今日をスライスにまとめる
 		var weatherInfos WeatherInfos
@@ -101,7 +107,10 @@ func GetWeatherToByCityCode() echo.HandlerFunc {
 		// cityのLon,Lat等を取得
 		city := model.GetLocationByCityCode(city_code)
 		// 8日分(今日+7日間)の天気予報を取得
-		weatherInfos := GetWeatherForcast(city.CityLon, city.CityLat, 8)
+		weatherInfos, err := GetWeatherForcast(city.CityLon, city.CityLat, 8)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+		}
 		return c.JSON(http.StatusOK, weatherInfos)
 	}
 }

@@ -1,9 +1,7 @@
 package api
 
 import (
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -12,6 +10,7 @@ import (
 	simplejson "github.com/bitly/go-simplejson"
 
 	"trip-weather-backend/config"
+	"trip-weather-backend/utils"
 )
 
 // 戻り値を整理して保持する構造体
@@ -35,12 +34,13 @@ func CountSpecificNumFromSlise(checkCode int, checkSlice []int) int {
 }
 
 // longitude(経度), latitude(緯度)を受け取り、APIに問い合わせて昨日の天気情報を返す関数
-func GetWeatherYesterday(lon float64, lat float64) WeatherInfo {
-	fmt.Println("GetWeatherYesterday START", time.Now())
+func GetWeatherYesterday(lon float64, lat float64) (WeatherInfo, error) {
+	utils.OutDebugLog("START")
 	// Requestインスタンス生成
 	request, err := http.NewRequest("GET", config.WEATHER_API_TIMEMACHINE_BASEURL, nil)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLog("failed to create http.NewRequest", err)
+		return WeatherInfo{}, err
 	}
 	// グリニッジ標準時における昨日を表すunixTimeを生成
 	timeYesterday := time.Now().AddDate(0, 0, -1).Add(time.Hour * time.Duration(9))
@@ -62,26 +62,29 @@ func GetWeatherYesterday(lon float64, lat float64) WeatherInfo {
 		Timeout: timeout,
 	}
 
-	// for Debug
-	fmt.Println(request.URL.String())
-
+	utils.OutInfoLogRequest("HTTP GET START", request.URL.String())
 	// HTTPリクエスト実行
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLogDetail("failed to HTTP GET", err, response.Status)
+		return WeatherInfo{}, err
 	}
+	utils.OutInfoLog("HTTP GET END")
+
 	// 関数を抜ける際に必ずresponseをcloseする
 	defer response.Body.Close()
 
 	// レスポンスを取得
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLog("failed to read response body", err)
+		return WeatherInfo{}, err
 	}
 	// レスポンスのjsonを解析 go-simplejsonを利用
 	js, err := simplejson.NewJson(body)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLogDetail("failed to read body as json", err, string(body))
+		return WeatherInfo{}, err
 	}
 
 	//// hourlyのデータからdailyの情報を判定
@@ -138,17 +141,19 @@ func GetWeatherYesterday(lon float64, lat float64) WeatherInfo {
 
 	//// 戻り値構造体に代入
 	weatherInfo := WeatherInfo{dateTimeStr, tempMax, tempMin, weatherCode}
-	fmt.Println("GetWeatherYesterday END", time.Now())
-	return weatherInfo
+	utils.OutDebugLog("END")
+	return weatherInfo, nil
 }
 
 // longitude(経度), latitude(緯度), 天気予報取得日数を受け取り、APIに問い合わせて天気予報を返す関数
-func GetWeatherForcast(lon float64, lat float64, getDayNum int) WeatherInfos {
-	fmt.Println("GetWeatherForcast START", time.Now())
+func GetWeatherForcast(lon float64, lat float64, getDayNum int) (WeatherInfos, error) {
+	utils.OutDebugLog("START")
+
 	// Requestインスタンス生成
 	request, err := http.NewRequest("GET", config.WEATHER_API_FORECAST_BASEURL, nil)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLog("failed to create http.NewRequest", err)
+		return nil, err
 	}
 	// クエリパラメータ作成
 	params := request.URL.Query()
@@ -165,27 +170,29 @@ func GetWeatherForcast(lon float64, lat float64, getDayNum int) WeatherInfos {
 		Timeout: timeout,
 	}
 
-	// for Debug
-	fmt.Println(request.URL.String())
-
+	utils.OutInfoLogRequest("HTTP GET START", request.URL.String())
 	// HTTPリクエスト実行
 	response, err := client.Do(request)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLogDetail("failed to HTTP GET", err, response.Status)
+		return nil, err
 	}
+	utils.OutInfoLog("HTTP GET END")
 	// 関数を抜ける際に必ずresponseをcloseする
 	defer response.Body.Close()
 
 	// レスポンスを取得
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLog("failed to read response body", err)
+		return nil, err
 	}
 
 	// レスポンスのjsonを解析 go-simplejsonを利用
 	js, err := simplejson.NewJson(body)
 	if err != nil {
-		log.Fatal(err)
+		utils.OutErrorLogDetail("failed to read body as json", err, string(body))
+		return nil, err
 	}
 	// レスポンスを戻り値構造体に代入
 	var weatherInfos WeatherInfos
@@ -200,6 +207,6 @@ func GetWeatherForcast(lon float64, lat float64, getDayNum int) WeatherInfos {
 		// 戻り値用sliceに追加
 		weatherInfos = append(weatherInfos, WeatherInfo{dateTimeStr, tempMax, tempMin, weatherCode})
 	}
-	fmt.Println("GetWeatherForcast END", time.Now())
-	return weatherInfos
+	utils.OutDebugLog("END")
+	return weatherInfos, nil
 }
