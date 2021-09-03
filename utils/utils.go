@@ -54,6 +54,18 @@ func OutInfoLogRequest(msg string, requestURL string) {
 	}).Info(msg)
 }
 
+// message, ipAddress, userAgentを受け取り、関数名を追加しログを出力する
+func OutInfoLogUserAccess(msg string, ipAddress string, userAgent string) {
+	pt, _, _, _ := runtime.Caller(1)
+	funcName := runtime.FuncForPC(pt).Name()
+
+	log.WithFields(log.Fields{
+		"funcName":  funcName,
+		"ipAddress": ipAddress,
+		"userAgent": userAgent,
+	}).Info(msg)
+}
+
 // messageを受け取り、関数名を追加しログを出力する
 func OutDebugLog(msg string) {
 	pt, _, _, _ := runtime.Caller(1)

@@ -9,16 +9,23 @@ import (
 	// 自作パッケージをインポート
 	"trip-weather-backend/config"
 	"trip-weather-backend/model"
+	"trip-weather-backend/utils"
 )
 
 func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		return c.String(http.StatusOK, "Hello World!")
 	}
 }
 
 func HelloUsername() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		username := c.Param("username")
 		return c.String(http.StatusOK, "Hello World! Your name is "+username)
 	}
@@ -27,6 +34,9 @@ func HelloUsername() echo.HandlerFunc {
 // today-1 ~ +7のdatetimeをstrにしたデータを返す
 func GetDatetimes() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		timeToday := time.Now()
 		// today-1 ~ +7
 		var timeStrDays []string
@@ -40,6 +50,9 @@ func GetDatetimes() echo.HandlerFunc {
 
 func GetPrefs() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		prefs := model.GetPrefAll()
 		return c.JSON(http.StatusOK, prefs)
 	}
@@ -47,6 +60,9 @@ func GetPrefs() echo.HandlerFunc {
 
 func GetCities() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		cities := model.GetCityAll()
 		return c.JSON(http.StatusOK, cities)
 	}
@@ -54,6 +70,9 @@ func GetCities() echo.HandlerFunc {
 
 func GetCitiesByPrefCode() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		pref_code := c.Param("pref_code")
 		cities := model.GetCityByPrefCode(pref_code)
 		return c.JSON(http.StatusOK, cities)
@@ -63,6 +82,9 @@ func GetCitiesByPrefCode() echo.HandlerFunc {
 // CityCodeを用いてFrom(現在地)の昨日の天気、今日の予想天気を取得
 func GetWeatherFromByCityCode() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		city_code := c.Param("city_code")
 		// cityのLon,Lat等を取得
 		city := model.GetLocationByCityCode(city_code)
@@ -103,6 +125,9 @@ func GetWeatherFromByCityCode() echo.HandlerFunc {
 // CityCodeを用いてTo(目的地)の予想天気を取得
 func GetWeatherToByCityCode() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
 		city_code := c.Param("city_code")
 		// cityのLon,Lat等を取得
 		city := model.GetLocationByCityCode(city_code)
