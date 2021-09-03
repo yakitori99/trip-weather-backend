@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -31,7 +30,5 @@ func GetPrefAll() SelectedPrefs {
 	for _, v := range prefs {
 		selectedPrefs = append(selectedPrefs, SelectedPref{v.PrefCode, v.PrefName})
 	}
-	fmt.Println("GetPrefAll END")
-
 	return selectedPrefs
 }

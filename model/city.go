@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -42,8 +41,6 @@ func GetCityAll() SelectedCities {
 		selectedCity := SelectedCity{v.CityCode, v.CityName, v.PrefCode, v.CityLon, v.CityLat}
 		selectedCities = append(selectedCities, selectedCity)
 	}
-	fmt.Println("GetCityAll END")
-
 	return selectedCities
 }
 
@@ -57,8 +54,6 @@ func GetCityByPrefCode(pref_code string) SelectedCities {
 		selectedCity := SelectedCity{v.CityCode, v.CityName, v.PrefCode, v.CityLon, v.CityLat}
 		selectedCities = append(selectedCities, selectedCity)
 	}
-	fmt.Println("GetCityByPrefCode END")
-
 	return selectedCities
 }
 
@@ -68,7 +63,5 @@ func GetLocationByCityCode(city_code string) SelectedCity {
 	db.Where("city_code = ?", city_code).First(&city)
 	// cityから必要な列のみ抽出
 	selectedCity := SelectedCity{city.CityCode, city.CityName, city.PrefCode, city.CityLon, city.CityLat}
-	fmt.Println("GetLocationByCityCode END")
-
 	return selectedCity
 }
