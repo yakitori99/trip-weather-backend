@@ -32,7 +32,7 @@ var WEATHER_CODE_THRESHS [6][3]int = [6][3]int{
 	// チェック用、output用Code, 個数のしきい値
 	{6, 600, 2},   // Snow
 	{2, 200, 2},   // Thunderstorm
-	{5, 500, 3},   // Rain
+	{5, 501, 3},   // Rain
 	{800, 800, 5}, // Clear //晴れ
 	{801, 801, 5}, // few clouds // 晴れ時々曇り
 	{802, 802, 5}, // scattered clouds // 晴れ時々曇り
