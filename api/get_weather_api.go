@@ -23,7 +23,7 @@ type WeatherInfo struct {
 type WeatherInfos []WeatherInfo
 
 // 条件とスライス(どちらもint)から、条件に一致する要素数を返す関数
-func CountSpecificNumFromSlise(checkCode int, checkSlice []int) int {
+func CountSpecificNumFromSlice(checkCode int, checkSlice []int) int {
 	num := 0
 	for _, v := range checkSlice {
 		if checkCode == v {
@@ -31,6 +31,38 @@ func CountSpecificNumFromSlise(checkCode int, checkSlice []int) int {
 		}
 	}
 	return num
+}
+
+// HourlyのweatherCodes(slice of int)から、ロジックに従いDailyのweatherCode(int)を返す関数
+func GetDailyWeatherCodeFromHourly(weatherCodes []int) int {
+	// 1桁判定用スライス
+	var weatherCodesOne []int
+	for _, _weatherCode := range weatherCodes {
+		weatherCodesOne = append(weatherCodesOne, _weatherCode/100)
+	}
+	// 判定
+	weatherCode := -1
+	for _, row := range config.WEATHER_CODE_THRESHS {
+		checkCode := row[0]
+		outCode := row[1]
+		thresh := row[2]
+		var num int
+		if checkCode <= 9 { //1桁判定
+			num = CountSpecificNumFromSlice(checkCode, weatherCodesOne)
+		} else { //3桁判定
+			num = CountSpecificNumFromSlice(checkCode, weatherCodes)
+		}
+
+		if num >= thresh {
+			weatherCode = outCode
+			break
+		}
+	}
+	// ここまでで天気が決まらない場合、曇りとみなす
+	if weatherCode == -1 {
+		weatherCode = config.WEATHER_CODE_CLOUDS
+	}
+	return weatherCode
 }
 
 // longitude(経度), latitude(緯度)を受け取り、APIに問い合わせて昨日の天気情報を返す関数
@@ -95,7 +127,7 @@ func GetWeatherYesterday(lon float64, lat float64) (WeatherInfo, error) {
 	var tempMax float64 = -100.0
 	var tempMin float64 = 100.0
 	var weatherCodes []int
-	for i, _ := range js.Get("hourly").MustArray() {
+	for i := range js.Get("hourly").MustArray() {
 		// 気温
 		temp := js.Get("hourly").GetIndex(i).Get("temp").MustFloat64()
 		if temp > tempMax {
@@ -110,43 +142,17 @@ func GetWeatherYesterday(lon float64, lat float64) (WeatherInfo, error) {
 			weatherCodes = append(weatherCodes, _weatherCode)
 		}
 	}
-	//// dailyで見た天気を判定
-	// 1桁判定用スライス
-	var weatherCodesOne []int
-	for _, _weatherCode := range weatherCodes {
-		weatherCodesOne = append(weatherCodesOne, _weatherCode/100)
-	}
-	// 判定
-	weatherCode := -1
-	for _, row := range config.WEATHER_CODE_THRESHS {
-		checkCode := row[0]
-		outCode := row[1]
-		thresh := row[2]
-		var num int
-		if checkCode <= 9 { //1桁判定
-			num = CountSpecificNumFromSlise(checkCode, weatherCodesOne)
-		} else { //3桁判定
-			num = CountSpecificNumFromSlise(checkCode, weatherCodes)
-		}
+	// dailyで見た天気を判定
+	weatherCode := GetDailyWeatherCodeFromHourly(weatherCodes)
 
-		if num >= thresh {
-			weatherCode = outCode
-			break
-		}
-	}
-	// ここまでで天気が決まらない場合、曇りとみなす
-	if weatherCode == -1 {
-		weatherCode = config.WEATHER_CODE_CLOUDS
-	}
-
-	//// 戻り値構造体に代入
+	// 戻り値構造体に代入
 	weatherInfo := WeatherInfo{dateTimeStr, tempMax, tempMin, weatherCode}
 	utils.OutDebugLog("END")
 	return weatherInfo, nil
 }
 
 // longitude(経度), latitude(緯度), 天気予報取得日数を受け取り、APIに問い合わせて天気予報を返す関数
-func GetWeatherForcast(lon float64, lat float64, getDayNum int) (WeatherInfos, error) {
+func GetWeatherForecast(lon float64, lat float64, getDayNum int) (WeatherInfos, error) {
 	utils.OutDebugLog("START")
 
 	// Requestインスタンス生成
