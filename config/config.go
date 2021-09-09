@@ -20,8 +20,12 @@ const (
 	// 普通の曇り
 	WEATHER_CODE_CLOUDS int = 803
 
-	// DB
+	//// DB
 	DB_PATH string = "db/trip_weather.db"
+	// execute code
+	DONE_ERR int = -1
+	DONE_INS int = 1
+	DONE_UPD int = 2
 )
 
 //// Goではarray,slice,mapは定数として扱えないため別途宣言

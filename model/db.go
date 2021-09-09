@@ -25,6 +25,7 @@ func InitDB(dbPath string) {
 	// Migrate the schema
 	db.AutoMigrate(&Pref{})
 	db.AutoMigrate(&City{})
+	db.AutoMigrate(&Favorite{})
 
 	utils.OutInfoLog("END")
 }
