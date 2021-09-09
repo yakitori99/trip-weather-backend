@@ -1,8 +1,11 @@
 package model
 
 import (
+	"errors"
+	"fmt"
 	"time"
 	"trip-weather-backend/config"
+	"trip-weather-backend/utils"
 
 	"gorm.io/gorm"
 )
@@ -25,6 +28,18 @@ func CreateFavoriteTransaction(fromCityCode string, toCityCode string) (int, err
 	var resultCode int
 	// トランザクション開始
 	tx := db.Begin()
+
+	// fromCityCode , toCityCodeの片方でもcitiesテーブルに存在しない場合はエラー
+	var count int64
+	for _, cityCode := range []string{fromCityCode, toCityCode} {
+		tx.Model(&City{}).Where("city_code = ?", cityCode).Count(&count)
+		if count == 0 {
+			tx.Rollback()
+			err := errors.New("invalid city_code")
+			utils.OutErrorLogDetail("invalid city_code", err, fmt.Sprintf("invalid cityCode:%v", cityCode))
+			return config.DONE_ERR, err
+		}
+	}
 
 	// SELECTして同一レコードが存在するかチェック
 	var favorite Favorite
