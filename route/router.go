@@ -37,5 +37,8 @@ func InitRoute() *echo.Echo {
 	// city_codeを用いて、目的地のWeatherForcast情報を返す
 	e.GET("/get_weather_to/:city_code", api.GetWeatherToByCityCode())
 
+	// jsonを受け取り、favoritesテーブルに対しINSまたはUPDする
+	e.POST("/favorites", api.CreateFavoriteFromJson())
+
 	return e
 }

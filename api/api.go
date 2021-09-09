@@ -12,6 +12,18 @@ import (
 	"trip-weather-backend/utils"
 )
 
+// FavoriteテーブルへのINSに必須の要素
+type FavoriteRequired struct {
+	// 受け取ったjsonからの紐付け用に、jsonタグも付ける
+	FromCityCode string `json:"from_city_code"`
+	ToCityCode   string `json:"to_city_code"`
+}
+
+// FavoriteテーブルへのINS結果(レスポンス用)
+type FavoriteInsResult struct {
+	ResultCode int
+}
+
 func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// user access log
@@ -137,5 +149,30 @@ func GetWeatherToByCityCode() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, "InternalServerError")
 		}
 		return c.JSON(http.StatusOK, weatherInfos)
+	}
+}
+
+// 受け取ったJSON(fromCityCode, toCityCode)を用いてfavoritesテーブルに対しINSする(同一レコードが存在する場合は更新日時のみUPD)
+func CreateFavoriteFromJson() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
+		// 受け取ったjsonを構造体にバインド
+		favoriteRequired := FavoriteRequired{}
+		err := c.Bind(&favoriteRequired)
+		if err != nil {
+			utils.OutErrorLog("failed to c.Bind", err)
+			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+		}
+
+		// favoritesテーブルに対しINS(またはUPD)
+		resultCode, err := model.CreateFavoriteTransaction(favoriteRequired.FromCityCode, favoriteRequired.ToCityCode)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+		}
+		favoriteInsResult := FavoriteInsResult{ResultCode: resultCode}
+
+		return c.JSON(http.StatusCreated, favoriteInsResult)
 	}
 }
