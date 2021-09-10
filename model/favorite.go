@@ -23,6 +23,34 @@ type Favorite struct {
 }
 type Favorites []Favorite
 
+// 画面表示に必要な要素を追加・抜粋したFavorite
+type SelectedFavorite struct {
+	FromPrefCode string
+	FromCityCode string
+	ToPrefCode   string
+	ToCityCode   string
+	FromPrefName string
+	FromCityName string
+	ToPrefName   string
+	ToCityName   string
+	UpdatedAt    time.Time
+}
+type SelectedFavorites []SelectedFavorite
+
+var getFavoriteSql string = `select
+f.from_pref_code, f.from_city_code, f.to_pref_code,f.to_city_code,
+p1.pref_name as from_pref_name, 
+c1.city_name as from_city_name, 
+p2.pref_name as to_pref_name, 
+c2.city_name as to_city_name, 
+f.updated_at
+from favorites f
+LEFT OUTER JOIN prefs p1 on f.from_pref_code = p1.pref_code
+LEFT OUTER JOIN prefs p2 on f.to_pref_code = p2.pref_code 
+LEFT OUTER JOIN cities c1 on f.from_city_code = c1.city_code
+LEFT OUTER JOIN cities c2 on f.to_city_code = c2.city_code 
+order by f.updated_at desc`
+
 // favoritesテーブルに対し、cityCodeで見て同一レコードがあればUPD, なければINSする関数
 func CreateFavoriteTransaction(fromCityCode string, toCityCode string) (int, error) {
 	var resultCode int
@@ -81,4 +109,20 @@ func CreateFavorite(tx *gorm.DB, fromCityCode string, toCityCode string) error {
 func DeleteFavorite(fromCityCode string, toCityCode string) error {
 	result := db.Where("from_city_code = ? AND to_city_code = ?", fromCityCode, toCityCode).Delete(Favorite{})
 	return result.Error
+}
+
+// favoritesテーブルから更新日時降順で全件を取得し、pref_name, city_nameとJOINして返す関数
+func GetFavoriteAll() SelectedFavorites {
+	var selectedFavorites SelectedFavorites
+	db.Raw(getFavoriteSql).Scan(&selectedFavorites)
+	return selectedFavorites
+}
+
+// favoritesテーブルから更新日時降順でn件を取得し、pref_name, city_nameとJOINして返す関数
+func GetFavoriteN(n int) SelectedFavorites {
+	var selectedFavorites SelectedFavorites
+	// n件まで の構文を追加
+	rawSql := getFavoriteSql + " limit ?"
+	db.Raw(rawSql, n).Scan(&selectedFavorites)
+	return selectedFavorites
 }

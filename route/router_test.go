@@ -91,3 +91,61 @@ func Test_CreateFavoriteFromJson(t *testing.T) {
 		End()
 	t.Log("ERR2 END")
 }
+
+func Test_GetFavoriteAll(t *testing.T) {
+	e := route.InitRoute()
+
+	// 正常系
+	apitest.New().
+		Handler(e).
+		Get("/favorites").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET END")
+}
+
+func Test_GetFavoriteN(t *testing.T) {
+	e := route.InitRoute()
+
+	// 正常系
+	apitest.New().
+		Handler(e).
+		Get("/favorites/10").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET END")
+
+	// 異常系1
+	apitest.New().
+		Handler(e).
+		Get("/favorites/a").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusBadRequest).
+		End()
+	t.Log("ERR1 END")
+
+	// 異常系2
+	apitest.New().
+		Handler(e).
+		Get("/favorites/0").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusBadRequest).
+		End()
+	t.Log("ERR2 END")
+
+	// 異常系3
+	apitest.New().
+		Handler(e).
+		Get("/favorites/-1").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusBadRequest).
+		End()
+	t.Log("ERR3 END")
+}

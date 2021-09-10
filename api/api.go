@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -23,6 +24,20 @@ type FavoriteRequired struct {
 type FavoriteInsResult struct {
 	ResultCode int
 }
+
+// 画面表示に必要な型変換済みのSelectedFavorite
+type SelectedFavoriteStr struct {
+	FromPrefCode string
+	FromCityCode string
+	ToPrefCode   string
+	ToCityCode   string
+	FromPrefName string
+	FromCityName string
+	ToPrefName   string
+	ToCityName   string
+	UpdatedAt    string
+}
+type SelectedFavoriteStrs []SelectedFavoriteStr
 
 func Hello() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -174,5 +189,63 @@ func CreateFavoriteFromJson() echo.HandlerFunc {
 		favoriteInsResult := FavoriteInsResult{ResultCode: resultCode}
 
 		return c.JSON(http.StatusCreated, favoriteInsResult)
+	}
+}
+
+// SelectedFavorites構造体を受け取り、UpdatedAtをtime型からstring型へ変換した構造体を返す関数
+func ChangeSelectedFavriteToStrs(selectedFavorites model.SelectedFavorites) SelectedFavoriteStrs {
+	// 更新日時を文字列へ変換し、リターン用構造体に代入
+	var selectedFavoriteStrs SelectedFavoriteStrs
+	for _, v := range selectedFavorites {
+		timeDayStr := v.UpdatedAt.Format(config.WEATHER_DATE_FORMAT)
+		selectedFavoriteStr := SelectedFavoriteStr{
+			FromPrefCode: v.FromPrefCode,
+			FromCityCode: v.FromCityCode,
+			ToPrefCode:   v.ToPrefCode,
+			ToCityCode:   v.ToCityCode,
+			FromPrefName: v.FromPrefName,
+			FromCityName: v.FromCityName,
+			ToPrefName:   v.ToPrefName,
+			ToCityName:   v.ToCityName,
+			UpdatedAt:    timeDayStr,
+		}
+		selectedFavoriteStrs = append(selectedFavoriteStrs, selectedFavoriteStr)
+	}
+	return selectedFavoriteStrs
+}
+
+// favoritesテーブルから更新日時降順で全件を取得して返す
+func GetFavoriteAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
+		// DB検索
+		selectedFavorites := model.GetFavoriteAll()
+		// 更新日時を文字列へ変換
+		selectedFavoriteStrs := ChangeSelectedFavriteToStrs(selectedFavorites)
+
+		return c.JSON(http.StatusOK, selectedFavoriteStrs)
+	}
+}
+
+// favoritesテーブルから更新日時降順でn件までを取得して返す
+func GetFavoriteN() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+		nString := c.Param("n")
+		// nがint型へ変換できない場合 or nが0以下の場合、StatusBadRequestでリターン
+		n, err := strconv.Atoi(nString)
+		if err != nil || n <= 0 {
+			return c.JSON(http.StatusBadRequest, "invalid request:"+nString)
+		}
+
+		// DB検索(n件まで)
+		selectedFavorites := model.GetFavoriteN(n)
+		// 更新日時を文字列へ変換
+		selectedFavoriteStrs := ChangeSelectedFavriteToStrs(selectedFavorites)
+
+		return c.JSON(http.StatusOK, selectedFavoriteStrs)
 	}
 }

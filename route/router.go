@@ -40,5 +40,10 @@ func InitRoute() *echo.Echo {
 	// jsonを受け取り、favoritesテーブルに対しINSまたはUPDする
 	e.POST("/favorites", api.CreateFavoriteFromJson())
 
+	// favoritesテーブルから更新日時降順で全件を取得して返す
+	e.GET("/favorites", api.GetFavoriteAll())
+	// favoritesテーブルから更新日時降順でn件までを取得して返す
+	e.GET("/favorites/:n", api.GetFavoriteN())
+
 	return e
 }
