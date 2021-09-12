@@ -3,6 +3,7 @@ package model
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 	"trip-weather-backend/config"
 	"trip-weather-backend/utils"
@@ -14,6 +15,7 @@ type Favorite struct {
 	// お気に入りテーブル
 	// 論理削除でなく、物理削除を使いたいのでgorm.Modelは利用しない
 	ID           int `gorm:"primary_key"`
+	Nickname     string
 	FromPrefCode string
 	FromCityCode string
 	ToPrefCode   string
@@ -25,6 +27,7 @@ type Favorites []Favorite
 
 // 画面表示に必要な要素を追加・抜粋したFavorite
 type SelectedFavorite struct {
+	Nickname     string
 	FromPrefCode string
 	FromCityCode string
 	ToPrefCode   string
@@ -38,7 +41,7 @@ type SelectedFavorite struct {
 type SelectedFavorites []SelectedFavorite
 
 var getFavoriteSql string = `select
-f.from_pref_code, f.from_city_code, f.to_pref_code,f.to_city_code,
+f.nickname, f.from_pref_code, f.from_city_code, f.to_pref_code,f.to_city_code,
 p1.pref_name as from_pref_name, 
 c1.city_name as from_city_name, 
 p2.pref_name as to_pref_name, 
@@ -51,9 +54,13 @@ LEFT OUTER JOIN cities c1 on f.from_city_code = c1.city_code
 LEFT OUTER JOIN cities c2 on f.to_city_code = c2.city_code 
 order by f.updated_at desc`
 
-// favoritesテーブルに対し、cityCodeで見て同一レコードがあればUPD, なければINSする関数
-func CreateFavoriteTransaction(fromCityCode string, toCityCode string) (int, error) {
+// favoritesテーブルに対し、nicknameとcityCodeで見て同一レコードがあればUPD, なければINSする関数
+func CreateFavoriteTransaction(nickname string, fromCityCode string, toCityCode string) (int, error) {
 	var resultCode int
+	// 空白文字は削除(半角/全角とも)
+	nickname = strings.ReplaceAll(nickname, " ", "")
+	nickname = strings.ReplaceAll(nickname, "　", "")
+
 	// トランザクション開始
 	tx := db.Begin()
 
@@ -71,14 +78,14 @@ func CreateFavoriteTransaction(fromCityCode string, toCityCode string) (int, err
 
 	// SELECTして同一レコードが存在するかチェック
 	var favorite Favorite
-	err := tx.Where("from_city_code = ? AND to_city_code = ?", fromCityCode, toCityCode).First(&favorite).Error
+	err := tx.Where("nickname = ? AND from_city_code = ? AND to_city_code = ?", nickname, fromCityCode, toCityCode).First(&favorite).Error
 	if err == gorm.ErrRecordNotFound {
 		// 同一レコードがなければINSERT
-		err = CreateFavorite(tx, fromCityCode, toCityCode)
+		err = CreateFavorite(tx, nickname, fromCityCode, toCityCode)
 		resultCode = config.DONE_INS
 	} else if err == nil {
 		// 同一レコードがあればUpdatedAtのみUpdate
-		err = tx.Model(Favorite{}).Where("from_city_code = ? AND to_city_code = ?", fromCityCode, toCityCode).Updates(Favorite{UpdatedAt: time.Now()}).Error
+		err = tx.Model(Favorite{}).Where("nickname = ? AND from_city_code = ? AND to_city_code = ?", nickname, fromCityCode, toCityCode).Updates(Favorite{UpdatedAt: time.Now()}).Error
 		resultCode = config.DONE_UPD
 	}
 
@@ -92,8 +99,9 @@ func CreateFavoriteTransaction(fromCityCode string, toCityCode string) (int, err
 }
 
 // favoriteテーブルにレコードをINSERTする関数
-func CreateFavorite(tx *gorm.DB, fromCityCode string, toCityCode string) error {
+func CreateFavorite(tx *gorm.DB, nickname string, fromCityCode string, toCityCode string) error {
 	favorite := Favorite{
+		Nickname:     nickname,
 		FromPrefCode: fromCityCode[:2],
 		FromCityCode: fromCityCode,
 		ToPrefCode:   toCityCode[:2],
@@ -106,8 +114,8 @@ func CreateFavorite(tx *gorm.DB, fromCityCode string, toCityCode string) error {
 }
 
 // favoriteテーブルからレコードをDELETEする関数
-func DeleteFavorite(fromCityCode string, toCityCode string) error {
-	result := db.Where("from_city_code = ? AND to_city_code = ?", fromCityCode, toCityCode).Delete(Favorite{})
+func DeleteFavorite(nickname string, fromCityCode string, toCityCode string) error {
+	result := db.Where("nickname = ? AND from_city_code = ? AND to_city_code = ?", nickname, fromCityCode, toCityCode).Delete(Favorite{})
 	return result.Error
 }
 

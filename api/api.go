@@ -16,6 +16,7 @@ import (
 // FavoriteテーブルへのINSに必須の要素
 type FavoriteRequired struct {
 	// 受け取ったjsonからの紐付け用に、jsonタグも付ける
+	Nickname     string `json:"nickname"`
 	FromCityCode string `json:"from_city_code"`
 	ToCityCode   string `json:"to_city_code"`
 }
@@ -27,6 +28,7 @@ type FavoriteInsResult struct {
 
 // 画面表示に必要な型変換済みのSelectedFavorite
 type SelectedFavoriteStr struct {
+	Nickname     string
 	FromPrefCode string
 	FromCityCode string
 	ToPrefCode   string
@@ -182,7 +184,7 @@ func CreateFavoriteFromJson() echo.HandlerFunc {
 		}
 
 		// favoritesテーブルに対しINS(またはUPD)
-		resultCode, err := model.CreateFavoriteTransaction(favoriteRequired.FromCityCode, favoriteRequired.ToCityCode)
+		resultCode, err := model.CreateFavoriteTransaction(favoriteRequired.Nickname, favoriteRequired.FromCityCode, favoriteRequired.ToCityCode)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, "InternalServerError")
 		}
@@ -199,6 +201,7 @@ func ChangeSelectedFavriteToStrs(selectedFavorites model.SelectedFavorites) Sele
 	for _, v := range selectedFavorites {
 		timeDayStr := v.UpdatedAt.Format(config.WEATHER_DATE_FORMAT)
 		selectedFavoriteStr := SelectedFavoriteStr{
+			Nickname:     v.Nickname,
 			FromPrefCode: v.FromPrefCode,
 			FromCityCode: v.FromCityCode,
 			ToPrefCode:   v.ToPrefCode,

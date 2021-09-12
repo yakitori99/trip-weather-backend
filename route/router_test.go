@@ -33,14 +33,21 @@ func TestMain(m *testing.M) {
 }
 
 func Test_CreateFavoriteFromJson(t *testing.T) {
-	var favoriteJSON = `{"from_city_code":"170010","to_city_code":"180010"}`
-	var favoriteJSONNG1 = `{"fromCityCode":"170010","toCityCode":"180010"}`
-	var favoriteJSONNG2 = `{"from_city_code":"170010","to_city_code":"990010"}`
+	var favoriteJSON1 = `{"nickname":"",   "from_city_code":"170010","to_city_code":"180010"}`
+	var favoriteJSON2 = `{"nickname":"u1", "from_city_code":"170010","to_city_code":"180010"}`
+	var favoriteJSONNG1 = `{"nickname":"", "fromCityCode":"170010",  "toCityCode":"180010"}`
+	var favoriteJSONNG2 = `{"nickname":"", "from_city_code":"170010","to_city_code":"990010"}`
 
 	// テーブル準備
-	err := model.DeleteFavorite("170010", "180010")
-	if err != nil {
-		t.Error(err)
+	deleteSlice := [][]string{
+		{"", "170010", "180010"},
+		{"u1", "170010", "180010"},
+	}
+	for _, v := range deleteSlice {
+		err := model.DeleteFavorite(v[0], v[1], v[2])
+		if err != nil {
+			t.Error(err)
+		}
 	}
 
 	e := route.InitRoute()
@@ -50,7 +57,18 @@ func Test_CreateFavoriteFromJson(t *testing.T) {
 		Handler(e).
 		Post("/favorites").
 		Headers(map[string]string{"User-Agent": "apitest"}).
-		JSON(favoriteJSON).
+		JSON(favoriteJSON1).
+		Expect(t).
+		Status(http.StatusCreated).
+		Assert(jsonpath.Equal(`$.ResultCode`, float64(config.DONE_INS))).
+		End()
+	t.Log("INS END")
+
+	apitest.New().
+		Handler(e).
+		Post("/favorites").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		JSON(favoriteJSON2).
 		Expect(t).
 		Status(http.StatusCreated).
 		Assert(jsonpath.Equal(`$.ResultCode`, float64(config.DONE_INS))).
@@ -62,7 +80,18 @@ func Test_CreateFavoriteFromJson(t *testing.T) {
 		Handler(e).
 		Post("/favorites").
 		Headers(map[string]string{"User-Agent": "apitest"}).
-		JSON(favoriteJSON).
+		JSON(favoriteJSON1).
+		Expect(t).
+		Status(http.StatusCreated).
+		Assert(jsonpath.Equal(`$.ResultCode`, float64(config.DONE_UPD))).
+		End()
+	t.Log("UPD END")
+
+	apitest.New().
+		Handler(e).
+		Post("/favorites").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		JSON(favoriteJSON2).
 		Expect(t).
 		Status(http.StatusCreated).
 		Assert(jsonpath.Equal(`$.ResultCode`, float64(config.DONE_UPD))).

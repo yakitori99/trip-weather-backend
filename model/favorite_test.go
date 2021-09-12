@@ -24,41 +24,53 @@ func TestMain(m *testing.M) {
 }
 
 func Test_CreateFavoriteTransaction(t *testing.T) {
-	cityCodesSlice := [][]string{
-		{"011000", "130010"},
-		{"130010", "130010"},
-		{"130020", "130010"},
-		{"990020", "130010"},
+	testSlice := [][]string{
+		// INS
+		{"u1", "011000", "130010"},
+		{"", "011000", "130010"},
+		{"u1", "130020", "130010"},
+		{"", "130020", "130010"},
+		// UPD
+		{"u1", "011000", "130010"},
+		{"", "011000", "130010"},
+		{" u1　", "011000", "130010"},
+		{" u　1　", "011000", "130010"},
+		{" u 1　", "011000", "130010"},
+		{" ", "011000", "130010"},
+		{"　", "011000", "130010"},
+		// ERR
+		{"u1", "990020", "130010"},
+		{"", "990020", "130010"},
 	}
 
-	// テスト準備 1,2は、存在する場合DELETE
-	for i := 1; i < 3; i++ {
-		err := model.DeleteFavorite(cityCodesSlice[i][0], cityCodesSlice[i][1])
+	// テスト準備 レコードがすでに存在する場合DELETE
+	for i := range testSlice {
+		err := model.DeleteFavorite(testSlice[i][0], testSlice[i][1], testSlice[i][2])
 		if err != nil {
 			t.Error(err)
 		}
 	}
 
 	// テスト
-	for i := range cityCodesSlice {
-		resultCode, err := model.CreateFavoriteTransaction(cityCodesSlice[i][0], cityCodesSlice[i][1])
-		if i <= 2 && err != nil {
+	for i := range testSlice {
+		resultCode, err := model.CreateFavoriteTransaction(testSlice[i][0], testSlice[i][1], testSlice[i][2])
+		if i <= 5 && err != nil {
 			t.Error(err)
 		}
-		// 0はUPD, 1-2はINS, 3はエラーならOK
-		if i == 0 {
-			if resultCode == config.DONE_UPD {
-				t.Logf("Record:%v, Updated. OK", i)
-			} else {
-				t.Errorf("Record:%v, NG", i)
-			}
-		} else if i >= 1 && i <= 2 {
+		// 0-3はINS, 4-10はUPD, 11-はエラーならOK
+		if i >= 0 && i <= 3 {
 			if resultCode == config.DONE_INS {
 				t.Logf("Record:%v, Inserted. OK", i)
 			} else {
 				t.Errorf("Record:%v, NG", i)
 			}
-		} else if i >= 3 {
+		} else if i >= 4 && i <= 10 {
+			if resultCode == config.DONE_UPD {
+				t.Logf("Record:%v, Updated. OK", i)
+			} else {
+				t.Errorf("Record:%v, NG", i)
+			}
+		} else if i >= 11 {
 			if err != nil {
 				t.Logf("Record:%v, ERR. OK. err is%v", i, err)
 			}
