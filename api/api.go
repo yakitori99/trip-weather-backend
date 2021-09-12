@@ -252,3 +252,32 @@ func GetFavoriteN() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, selectedFavoriteStrs)
 	}
 }
+
+// favoritesテーブルから更新日時降順でn件までを取得して返す
+func GetFavoriteByNickname() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+		nickname := c.Param("nickname")
+
+		// DB検索
+		selectedFavorites := model.GetFavoriteByNickname(nickname)
+		// 更新日時を文字列へ変換
+		selectedFavoriteStrs := ChangeSelectedFavriteToStrs(selectedFavorites)
+
+		return c.JSON(http.StatusOK, selectedFavoriteStrs)
+	}
+}
+
+// favoritesテーブルから更新日時降順でn件までを取得して返す
+func GetNicknameDistinct() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		// user access log
+		utils.OutInfoLogUserAccess("START", c.RealIP(), c.Request().Header["User-Agent"][0])
+
+		// DB検索
+		selectedNicknames := model.GetNicknameDistinct()
+
+		return c.JSON(http.StatusOK, selectedNicknames)
+	}
+}

@@ -43,7 +43,12 @@ func InitRoute() *echo.Echo {
 	// favoritesテーブルから更新日時降順で全件を取得して返す
 	e.GET("/favorites", api.GetFavoriteAll())
 	// favoritesテーブルから更新日時降順でn件までを取得して返す
-	e.GET("/favorites/:n", api.GetFavoriteN())
+	e.GET("/favorites/to/:n", api.GetFavoriteN())
+	// favoritesテーブルからニックネームをキーに検索し、更新日時降順で全件を取得して返す
+	e.GET("/favorites/by/:nickname", api.GetFavoriteByNickname())
+
+	// favoritesテーブルから重複しないニックネーム一覧を取得し、ニックネームの昇順で返す
+	e.GET("/nicknames", api.GetNicknameDistinct())
 
 	return e
 }

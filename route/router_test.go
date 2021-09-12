@@ -141,7 +141,7 @@ func Test_GetFavoriteN(t *testing.T) {
 	// 正常系
 	apitest.New().
 		Handler(e).
-		Get("/favorites/10").
+		Get("/favorites/to/10").
 		Headers(map[string]string{"User-Agent": "apitest"}).
 		Expect(t).
 		Status(http.StatusOK).
@@ -151,7 +151,7 @@ func Test_GetFavoriteN(t *testing.T) {
 	// 異常系1
 	apitest.New().
 		Handler(e).
-		Get("/favorites/a").
+		Get("/favorites/to/a").
 		Headers(map[string]string{"User-Agent": "apitest"}).
 		Expect(t).
 		Status(http.StatusBadRequest).
@@ -161,7 +161,7 @@ func Test_GetFavoriteN(t *testing.T) {
 	// 異常系2
 	apitest.New().
 		Handler(e).
-		Get("/favorites/0").
+		Get("/favorites/to/0").
 		Headers(map[string]string{"User-Agent": "apitest"}).
 		Expect(t).
 		Status(http.StatusBadRequest).
@@ -171,10 +171,58 @@ func Test_GetFavoriteN(t *testing.T) {
 	// 異常系3
 	apitest.New().
 		Handler(e).
-		Get("/favorites/-1").
+		Get("/favorites/to/-1").
 		Headers(map[string]string{"User-Agent": "apitest"}).
 		Expect(t).
 		Status(http.StatusBadRequest).
 		End()
 	t.Log("ERR3 END")
+}
+
+func Test_GetFavoriteByNickname(t *testing.T) {
+	e := route.InitRoute()
+
+	// 正常系1
+	apitest.New().
+		Handler(e).
+		Get("/favorites/by/u1").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET1 END")
+
+	// 正常系2
+	apitest.New().
+		Handler(e).
+		Get("/favorites/by/1").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET2 END")
+
+	// 異常系1
+	apitest.New().
+		Handler(e).
+		Get("/favorites/by/").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusNotFound).
+		End()
+	t.Log("ERR1 END")
+}
+
+func Test_GetNicknameDistinct(t *testing.T) {
+	e := route.InitRoute()
+
+	// 正常系
+	apitest.New().
+		Handler(e).
+		Get("/nicknames").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET END")
 }
