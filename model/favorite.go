@@ -158,6 +158,11 @@ func GetFavoriteN(n int) SelectedFavorites {
 
 // favoritesテーブルからNicknameをキーに更新日時降順で全件を取得し、pref_name, city_nameとJOINして返す関数
 func GetFavoriteByNickname(nickname string) SelectedFavorites {
+	// 以下の特定文字列の場合のみ、空文字で検索する (空文字をURL末尾に含められないため,特殊文字列でな対応)
+	if nickname == "no_nickname_selected" {
+		nickname = ""
+	}
+
 	var selectedFavorites SelectedFavorites
 	db.Raw(getFavoriteByNicknameSql, nickname).Scan(&selectedFavorites)
 	return selectedFavorites

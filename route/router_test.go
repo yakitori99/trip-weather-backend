@@ -202,6 +202,16 @@ func Test_GetFavoriteByNickname(t *testing.T) {
 		End()
 	t.Log("GET2 END")
 
+	//  正常系3
+	apitest.New().
+		Handler(e).
+		Get("/favorites/by/no_nickname_selected").
+		Headers(map[string]string{"User-Agent": "apitest"}).
+		Expect(t).
+		Status(http.StatusOK).
+		End()
+	t.Log("GET3 END")
+
 	// 異常系1
 	apitest.New().
 		Handler(e).
