@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 
 func Test_CreateFavoriteFromJson(t *testing.T) {
 	var favoriteJSON1 = `{"nickname":"",   "from_city_code":"170010","to_city_code":"180010"}`
-	var favoriteJSON2 = `{"nickname":"山田", "from_city_code":"120010","to_city_code":"170010"}`
+	var favoriteJSON2 = `{"nickname":"たなか", "from_city_code":"130010","to_city_code":"130010"}`
 	var favoriteJSONNG1 = `{"nickname":"", "fromCityCode":"170010",  "toCityCode":"180010"}`
 	var favoriteJSONNG2 = `{"nickname":"", "from_city_code":"170010","to_city_code":"990010"}`
 
@@ -42,6 +42,7 @@ func Test_CreateFavoriteFromJson(t *testing.T) {
 	deleteSlice := [][]string{
 		{"", "170010", "180010"},
 		{"u1", "170010", "180010"},
+		{"たなか", "130010", "130010"},
 	}
 	for _, v := range deleteSlice {
 		err := model.DeleteFavorite(v[0], v[1], v[2])
