@@ -98,7 +98,7 @@ func GetWeatherYesterday(lon float64, lat float64) (WeatherInfo, error) {
 	// HTTPリクエスト実行
 	response, err := client.Do(request)
 	if err != nil {
-		utils.OutErrorLogDetail("failed to HTTP GET", err, response.Status)
+		utils.OutErrorLog("failed to HTTP GET", err)
 		return WeatherInfo{}, err
 	}
 	utils.OutInfoLog("HTTP GET END")
@@ -180,7 +180,7 @@ func GetWeatherForecast(lon float64, lat float64, getDayNum int) (WeatherInfos, 
 	// HTTPリクエスト実行
 	response, err := client.Do(request)
 	if err != nil {
-		utils.OutErrorLogDetail("failed to HTTP GET", err, response.Status)
+		utils.OutErrorLog("failed to HTTP GET", err)
 		return nil, err
 	}
 	utils.OutInfoLog("HTTP GET END")
