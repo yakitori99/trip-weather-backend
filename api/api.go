@@ -139,7 +139,7 @@ func GetWeatherFromByCityCode() echo.HandlerFunc {
 		wg.Wait()
 
 		if err1 != nil || err2 != nil {
-			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+			return c.JSON(http.StatusServiceUnavailable, "ServiceUnavailable")
 		}
 
 		// 昨日と今日をスライスにまとめる
@@ -163,7 +163,7 @@ func GetWeatherToByCityCode() echo.HandlerFunc {
 		// 8日分(今日+7日間)の天気予報を取得
 		weatherInfos, err := GetWeatherForecast(city.CityLon, city.CityLat, 8)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, "InternalServerError")
+			return c.JSON(http.StatusServiceUnavailable, "ServiceUnavailable")
 		}
 		return c.JSON(http.StatusOK, weatherInfos)
 	}
