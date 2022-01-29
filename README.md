@@ -67,6 +67,19 @@ https://trip-weather-frontend.herokuapp.com/
 - お気に入りから選んで天気を表示する機能
 <br>
 
+## API一覧（バックエンド：Go+Echo）
+|No.|アクセスURI|メソッド|概要|
+|:----|:----|:----|:----|
+|1|/prefs|GET|都道府県一覧を返す|
+|2|/cities|GET|都市一覧を返す|
+|3|/weather_from/:city_code|GET|都市コードを入力とし、その都市の昨日・今日の気温・天気情報を返す|
+|4|/weather_to/:city_code|GET|都市コードを入力とし、その都市の今日から1週間の予想気温・天気情報を返す|
+|5|/datetimes|GET|Webサーバの現在日時を元に、today-1 ～today+7の日時文字列を返す|
+|6|/favorites|POST|お気に入り情報をfavoritesテーブルにINSERTする<br>※すでに登録済みの現在地・目的地のセットだった場合、INSERTは行わず、更新日時のUPDATEのみ行う|
+|7|/favorites/by/:nickname|GET|ニックネームを入力とし、favoritesテーブルをニックネームで検索し、お気に入り情報を全件返す<br>※登録日時の降順でソート|
+|8|/nicknames|GET|favoritesテーブルからニックネームをdistinctで全件返す<br>※ニックネームの昇順でソート|
+<br>
+
 ## 工夫したこと（バックエンド：Go+Echo）
 - 高速化のため、2つ以上のAPIを呼び出すときは並行処理とした
 - テストコードを用いて、単体テスト・APIテストを自動化した
