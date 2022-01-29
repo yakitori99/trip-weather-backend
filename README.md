@@ -7,11 +7,11 @@
 レスポンシブ対応のため、スマホ/PCどちらからでも利用可能です。
 <br>
 
-### サイトURL
+## サイトURL
 https://trip-weather-frontend.herokuapp.com/
 <br>
 
-### 構成図
+## 構成図
 このリポジトリは以下赤枠部分のコードを含みます。
 ![構成図(Go)](image/TripWeather構成図_Go.png) 
 
@@ -22,8 +22,8 @@ https://trip-weather-frontend.herokuapp.com/
 - バックエンド②（Ruby on Rails版。機能はGo+Echo版と同様）  
   https://github.com/yakitori99/trip-weather-backend-rails
 
-### 主な使用技術（アプリケーション全体）
-#### フロントエンド
+## 主な使用技術（アプリケーション全体）
+### フロントエンド
 - Vue.js 2.6
   - Vuetify (UIライブラリ)
   - vue-toasted (トースト表示用ライブラリ)
@@ -31,7 +31,7 @@ https://trip-weather-frontend.herokuapp.com/
 - axios (非同期通信)
 - nginx (Webサーバ)
 
-#### バックエンド①
+### バックエンド①
 - Go 1.16
   - Echo (Webフレームワーク)
   - GORM (ORMフレームワーク)
@@ -39,7 +39,7 @@ https://trip-weather-frontend.herokuapp.com/
   - go-simplejson (jsonのパース用ライブラリ)
   - apitest (APIテスト用ライブラリ)
 
-#### バックエンド②
+### バックエンド②
 - Ruby 3.0 / Ruby on Rails 6.1
   - Puma (Web/アプリケーションサーバ)
   - Faraday (HTTP通信用ライブラリ)
@@ -47,16 +47,16 @@ https://trip-weather-frontend.herokuapp.com/
 
 ※バックエンド①と②は全く同じ機能です。学習のため、2つの言語でそれぞれ作成しました。
 
-#### インフラ
+### インフラ
 - Heroku
 - Docker / docker-compose
 - SQLite
 
-#### API
+### API
 - OpenWeather API
 <br>
 
-### 機能一覧（アプリケーション全体）
+## 機能一覧（アプリケーション全体）
 - 天気表示機能
   - 現在地の昨日、今日の天気
   - 目的地の今日の天気、明日から1週間の天気予報
@@ -67,12 +67,12 @@ https://trip-weather-frontend.herokuapp.com/
 - お気に入りから選んで天気を表示する機能
 <br>
 
-### 工夫したこと（バックエンド：Go+Echo）
+## 工夫したこと（バックエンド：Go+Echo）
 - 高速化のため、2つ以上のAPIを呼び出すときは並行処理とした
 - テストコードを用いて、単体テスト・APIテストを自動化した
 - Dockerイメージ軽量化のため、マルチステージビルドを行い、リリース用イメージにはビルド済み実行ファイルのみを置いた
 
-### やっていないこと（バックエンド：Go+Echo）
+## やっていないこと（バックエンド：Go+Echo）
 - ログイン機能はなし
   - 天気を見るだけのアプリでユーザ登録をさせたくないので
 - WebAPIの機能として、基本的に入力値のチェックなし
