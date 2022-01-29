@@ -25,6 +25,8 @@ https://trip-weather-frontend.herokuapp.com/
 ## 主な使用技術（アプリケーション全体）
 ### フロントエンド
 - Vue.js 2.6
+  - Vuex (状態管理ライブラリ)
+  - Vue Router (SPA構築用ルーティング制御ライブラリ)
   - Vuetify (UIライブラリ)
   - vue-toasted (トースト表示用ライブラリ)
 - chart.js (グラフ表示)
