@@ -4,6 +4,8 @@
 
 現在地・目的地をお気に入りに登録しておくことで、次回以降は簡単に天気予報を確認することができます。
 ![利用イメージ2](image/TripWeather_利用イメージ2.png)
+レスポンシブ対応のため、スマホ/PCどちらからでも利用可能です。
+<br>
 
 ### サイトURL
 https://trip-weather-frontend.herokuapp.com/
