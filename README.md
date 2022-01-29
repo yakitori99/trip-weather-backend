@@ -16,11 +16,9 @@ https://trip-weather-frontend.herokuapp.com/
 関連するリポジトリは以下の2つです。
 - フロントエンド（Vue.js）  
   https://github.com/yakitori99/trip-weather-frontend
-<br>
 
 - バックエンド②（Ruby on Rails版。機能はGo+Echo版と同様）  
   https://github.com/yakitori99/trip-weather-backend-rails
-<br>
 
 ### 主な使用技術（アプリケーション全体）
 #### フロントエンド
