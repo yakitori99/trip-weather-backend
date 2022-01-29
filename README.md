@@ -30,6 +30,7 @@ https://trip-weather-frontend.herokuapp.com/
 - chart.js (グラフ表示)
 - axios (非同期通信)
 - nginx (Webサーバ)
+- Font Awesome (アイコン)
 
 ### バックエンド①
 - Go 1.16
