@@ -6,7 +6,7 @@
 ![利用イメージ2](image/TripWeather_利用イメージ2.png)
 
 ### サイトURL
-<a href="https://trip-weather-frontend.herokuapp.com/" target="_blank">https://trip-weather-frontend.herokuapp.com/</a>
+https://trip-weather-frontend.herokuapp.com/
 <br>
 
 ### 構成図
@@ -14,11 +14,11 @@
 ![構成図(Go)](image/TripWeather構成図_Go.png) 
 
 関連するリポジトリは以下の2つです。
-- フロントエンド（Vue.js）
-  <a href="https://github.com/yakitori99/trip-weather-frontend" target="_blank">https://github.com/yakitori99/trip-weather-frontend</a>
+- フロントエンド（Vue.js）  
+  https://github.com/yakitori99/trip-weather-frontend
 <br>
-- バックエンド②（Ruby on Rails版。機能はGo+Echo版と同様）
-  <a href="https://github.com/yakitori99/trip-weather-backend-rails" target="_blank">https://github.com/yakitori99/trip-weather-backend-rails</a>
+- バックエンド②（Ruby on Rails版。機能はGo+Echo版と同様）  
+  https://github.com/yakitori99/trip-weather-backend-rails
 <br>
 
 ### 主な使用技術（アプリケーション全体）
