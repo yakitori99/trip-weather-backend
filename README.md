@@ -15,11 +15,14 @@ https://trip-weather-frontend.herokuapp.com/
 このリポジトリは以下赤枠部分のコードを含みます。
 ![構成図(Go)](image/TripWeather構成図_Go.png) 
 
-関連するリポジトリは以下の2つです。
+関連するリポジトリは以下の3つです。
 - フロントエンド（Vue.js）  
   https://github.com/yakitori99/trip-weather-frontend
 
-- バックエンド②（Ruby on Rails版。機能はGo+Echo版と同様）  
+- バックエンド①（Go+Echo版。このリポジトリ）  
+  https://github.com/yakitori99/trip-weather-backend
+
+- バックエンド②（Rails版。機能はGo+Echo版と同様）  
   https://github.com/yakitori99/trip-weather-backend-rails
 
 ## 主な使用技術（アプリケーション全体）
