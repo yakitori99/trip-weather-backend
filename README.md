@@ -19,7 +19,7 @@ https://trip-weather-frontend.herokuapp.com/
 - フロントエンド（Vue.js）  
   https://github.com/yakitori99/trip-weather-frontend
 
-- バックエンド①（Go+Echo版。このリポジトリ）  
+- **バックエンド①（Go+Echo版。このリポジトリ）**  
   https://github.com/yakitori99/trip-weather-backend
 
 - バックエンド②（Rails版。機能はGo+Echo版と同様）  
