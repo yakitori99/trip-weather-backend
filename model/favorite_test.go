@@ -11,8 +11,7 @@ func TestMain(m *testing.M) {
 	//// 共通前処理
 	println("Test START")
 	// DB初期化
-	dbPath := "../db/trip_weather.db" //UnitTest用のDBパス
-	model.InitDB(dbPath)
+	model.InitDB(config.DSN_FOR_TEST)
 
 	//// テスト実行
 	code := m.Run()

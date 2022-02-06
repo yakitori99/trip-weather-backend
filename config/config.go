@@ -21,7 +21,7 @@ const (
 	WEATHER_CODE_CLOUDS int = 803
 
 	//// DB
-	DB_PATH string = "db/trip_weather.db"
+	// DB_PATH string = "db/trip_weather.db"
 	// execute code
 	DONE_ERR int = -1
 	DONE_INS int = 1

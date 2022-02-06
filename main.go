@@ -29,7 +29,7 @@ func init() {
 
 func main() {
 	// DBを初期化
-	model.InitDB(config.DB_PATH)
+	model.InitDB(config.DSN)
 
 	// for Heroku 環境変数からポート番号を取得
 	var port string = os.Getenv("PORT")
