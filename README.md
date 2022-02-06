@@ -56,8 +56,9 @@ https://trip-weather-frontend.herokuapp.com/
 
 ### インフラ
 - Heroku
+- Heroku Postgres
 - Docker / docker-compose
-- SQLite
+
 
 ### API
 - OpenWeather API
@@ -98,5 +99,3 @@ https://trip-weather-frontend.herokuapp.com/
 - WebAPIの機能として、基本的に入力値のチェックなし
   - 自作のフロントエンドからのみ呼び出す処理であり、想定外の値が来ることはないため
   - ただし、念のため、登録系のAPIのみ不整合データが登録できないようなチェック処理あり
-- DBサーバを分けていない
-  - 通常分けるべきだが、簡略化のためSQLiteを利用
