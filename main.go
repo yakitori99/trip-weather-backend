@@ -6,6 +6,7 @@ import (
 	"trip-weather-backend/config"
 	"trip-weather-backend/model"
 	"trip-weather-backend/route"
+	"trip-weather-backend/utils"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -28,8 +29,17 @@ func init() {
 }
 
 func main() {
+	// for Heroku 環境変数からDB接続文字列を取得
+	var dsn string = os.Getenv("DATABASE_URL")
+	// for Local 環境変数に"DATABASE_URL"がない場合、configの値を利用
+	if dsn == "" {
+		dsn = config.DSN
+		utils.OutInfoLog("use config.DSN")
+	} else {
+		utils.OutInfoLog("use env DATABASE_URL")
+	}
 	// DBを初期化
-	model.InitDB(config.DSN)
+	model.InitDB(dsn)
 
 	// for Heroku 環境変数からポート番号を取得
 	var port string = os.Getenv("PORT")
