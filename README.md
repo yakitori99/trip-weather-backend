@@ -85,7 +85,7 @@ https://trip-weather-frontend.herokuapp.com/
 |5|/datetimes|GET|Webサーバの現在日時を元に、today-1 ～today+7の日時文字列を返す|
 |6|/favorites|POST|お気に入り情報をfavoritesテーブルにINSERTする<br>※すでに登録済みの現在地・目的地のセットだった場合、INSERTは行わず、更新日時のUPDATEのみ行う|
 |7|/favorites/by/:nickname|GET|ニックネームを入力とし、favoritesテーブルをニックネームで検索し、お気に入り情報を全件返す<br>※登録日時の降順でソート|
-|8|/nicknames|GET|favoritesテーブルからニックネームをdistinctで全件返す<br>※ニックネームの昇順でソート|
+|8|/nicknames|GET|ニックネーム一覧を返す<br>※ニックネームの昇順でソート|
 <br>
 
 ## 工夫したこと（バックエンド：Go+Echo）
