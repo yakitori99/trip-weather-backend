@@ -48,9 +48,9 @@ https://trip-weather-frontend.herokuapp.com/
 
 ### バックエンド②
 - Ruby 3.0 / Ruby on Rails 6.1
-  - Puma (Web/アプリケーションサーバ)
   - Faraday (HTTP通信用ライブラリ)
   - parallel (並行処理用ライブラリ)
+- Puma (Web/アプリケーションサーバ)
 
 ※バックエンド①と②は全く同じ機能です。学習のため、2つの言語でそれぞれ作成しました。
 
